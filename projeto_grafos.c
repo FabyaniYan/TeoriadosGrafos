@@ -6,6 +6,7 @@
 #include<stdlib.h>
 #include<limits.h>
 #include<memory.h>
+#include<string.h>
 
 
 /* 
@@ -18,6 +19,7 @@ typedef struct aresta{ /* Celula de uma lista de arestas */
 
 typedef struct vertice{  /* Cada vertice tem um ponteiro para uma lista de arestas incidentes nele */
 	int nome;
+	char nomePessoa[50];
 	Aresta *a;
 }Vertice;
 
@@ -48,6 +50,7 @@ void criarGrafo(Vertice **G, int ordem){
 
 	for(i = 0; i < ordem; i++){
 		(*G)[i].nome = i;
+		(*G)[i].nomePessoa[0] = '\0';
 		(*G)[i].a = NULL;
 	}
 }
@@ -113,23 +116,26 @@ int acrescentarAresta(Vertice G[], int ordem, int v1, int v2){
 
 
 /*  
- * Imprime um grafo com uma notacao similar a uma lista de adjacencia.
+ * Imprime os moradores e seus contatos
  */
 void imprimirGrafo(Vertice G[], int ordem){
 	int i;
 	Aresta *aux;
 
-	printf("\nOrdem: %d", ordem);
-	printf("\nLista de Adjacencia:\n");
+	printf("\nRede de contatos do condominio:\n");
 
 	for(i = 0; i < ordem; i++){
 
-		printf("\n    v%d: ", i);
+		printf("\n%s: ", G[i].nomePessoa);
 
 		aux = G[i].a;
 
+		if(aux == NULL){
+			printf("sem contatos");
+		}
+
 		for(; aux != NULL; aux = aux->prox){
-			printf("  v%d", aux->outroExtremo);
+			printf("%s  ", G[aux->outroExtremo].nomePessoa);
 		}
 	}
 
@@ -144,28 +150,24 @@ void pessoasSemContato(Vertice G[], int ordem){
 	int i;
 	int encontrou = 0;
 
-	printf("\nPessoas sem nenhum contato na rede:\n");
+	printf("\nMoradores sem nenhum contato na rede:\n");
 
 	for(i = 0; i < ordem; i++){
 
 		/*
-		 * Se o ponteiro da lista de arestas for NULL,
-		 * o vertice nao possui nenhuma aresta incidente.
+		 * Se a lista de arestas estiver vazia,
+		 * o morador nao possui contato com nenhum outro morador.
 		 */
 		if(G[i].a == NULL){
 
-			printf("Pessoa %d\n", G[i].nome);
+			printf("%s\n", G[i].nomePessoa);
 
 			encontrou = 1;
 		}
 	}
 
-	/*
-	 * Caso todos os vertices possuam pelo menos
-	 * um contato.
-	 */
 	if(encontrou == 0){
-		printf("Nao existem pessoas sem contato na rede.\n");
+		printf("Nao existem moradores sem contato na rede.\n");
 	}
 
 	printf("\n");
@@ -173,46 +175,79 @@ void pessoasSemContato(Vertice G[], int ordem){
 
 
 /*
- * Programa simples para testar a representacao de grafo
+ * Programa para representar a rede social de moradores
+ * de um condominio.
  */
 int main(int argc, char *argv[]) {
 
 	Vertice *G;
 
-	int ordemG = 8; /* vertices identificados de 0 ate 7 */
+	int ordemG = 15; /* 15 moradores identificados de 0 ate 14 */
 
 	criarGrafo(&G, ordemG);
 
 
-	acrescentarAresta(G, ordemG, 0, 1);
-
-	acrescentarAresta(G, ordemG, 0, 2);
-
-	acrescentarAresta(G, ordemG, 0, 7);
-
-	acrescentarAresta(G, ordemG, 2, 4);
-
-	acrescentarAresta(G, ordemG, 2, 5);
-
-	acrescentarAresta(G, ordemG, 2, 5);
-
-	acrescentarAresta(G, ordemG, 3, 5);
-
-	acrescentarAresta(G, ordemG, 4, 6);
-
-	acrescentarAresta(G, ordemG, 3, 6);
-
-	acrescentarAresta(G, ordemG, 7, 7);
+	/*
+	 * nomes dos moradores
+	 */
+	strcpy(G[0].nomePessoa, "Ana");
+	strcpy(G[1].nomePessoa, "Bruno");
+	strcpy(G[2].nomePessoa, "Carla");
+	strcpy(G[3].nomePessoa, "Daniel");
+	strcpy(G[4].nomePessoa, "Eduardo");
+	strcpy(G[5].nomePessoa, "Fernanda");
+	strcpy(G[6].nomePessoa, "Gabriel");
+	strcpy(G[7].nomePessoa, "Helena");
+	strcpy(G[8].nomePessoa, "Igor");
+	strcpy(G[9].nomePessoa, "Juliana");
+	strcpy(G[10].nomePessoa, "Lucas");
+	strcpy(G[11].nomePessoa, "Mariana");
+	strcpy(G[12].nomePessoa, "Natalia");
+	strcpy(G[13].nomePessoa, "Otavio");
+	strcpy(G[14].nomePessoa, "Olivia");
 
 
 	/*
-	 * Exibe o grafo
+	 * contatos entre os moradores
+	 */
+
+	acrescentarAresta(G, ordemG, 0, 1);
+	acrescentarAresta(G, ordemG, 0, 2);
+	acrescentarAresta(G, ordemG, 0, 3);
+
+	acrescentarAresta(G, ordemG, 1, 2);
+
+	acrescentarAresta(G, ordemG, 2, 3);
+	acrescentarAresta(G, ordemG, 2, 4);
+
+	acrescentarAresta(G, ordemG, 3, 4);
+
+	acrescentarAresta(G, ordemG, 5, 6);
+	acrescentarAresta(G, ordemG, 5, 7);
+
+	acrescentarAresta(G, ordemG, 6, 7);
+	acrescentarAresta(G, ordemG, 6, 8);
+
+	acrescentarAresta(G, ordemG, 7, 8);
+
+	acrescentarAresta(G, ordemG, 9, 10);
+	acrescentarAresta(G, ordemG, 10, 11);
+	acrescentarAresta(G, ordemG, 11, 12);
+	acrescentarAresta(G, ordemG, 12, 13);
+
+	/*
+	 * Olivia, vertice 14, nao possui contato
+	 */
+
+
+	/*
+	 * Exibe a rede social
 	 */
 	imprimirGrafo(G, ordemG);
 
 
 	/*
-	 * verifica pessoas que nao possuem nenhum contato
+	 * verifica moradores que nao possuem nenhum contato
 	 */
 	pessoasSemContato(G, ordemG);
 
