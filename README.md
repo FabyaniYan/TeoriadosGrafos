@@ -1,8 +1,10 @@
 # Projeto de Teoria dos Grafos
 
-O objetivo do projeto é modelar uma rede social por meio de um grafo, no qual os vértices representam as pessoas e as arestas representam os contatos existentes entre elas.
+O objetivo do projeto é modelar uma rede social por meio de um grafo. A rede escolhida representa um grupo de 15 moradores de um condomínio residencial.
 
-O programa implementa funções para criação e consulta da rede social, permitindo identificar pessoas sem contatos, pessoas que possuem apenas um contato, pessoas com maior número de contatos e grupos isolados dentro da rede.
+Cada morador é representado por um vértice do grafo e cada contato existente entre dois moradores é representado por uma aresta.
+
+O programa implementa funções para criação e consulta da rede social, permitindo identificar moradores sem contatos, moradores que possuem apenas um contato, moradores com maior número de contatos e grupos isolados dentro da rede.
 
 ## Integrantes
 
