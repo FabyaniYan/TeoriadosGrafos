@@ -38,6 +38,13 @@ void imprimirGrafo(Vertice G[], int ordem);
  */
 void pessoasSemContato(Vertice G[], int ordem);
 
+/*
+ * Declaracoes das funcoes acrescentadas para o projeto (Pessoa 2)
+ */
+int contarContatos(Vertice G[], int v);
+void pessoasComUmContato(Vertice G[], int ordem);
+void pessoasComMaisContatos(Vertice G[], int ordem);
+
 
 /*
  * Criacao de um grafo com ordem predefinida (passada como argumento),
@@ -175,6 +182,74 @@ void pessoasSemContato(Vertice G[], int ordem){
 
 
 /*
+ * Funcao auxiliar para contar o numero de contatos (grau) de um vertice
+ */
+int contarContatos(Vertice G[], int v) {
+	int count = 0;
+	Aresta *aux = G[v].a;
+	while(aux != NULL) {
+		count++;
+		aux = aux->prox;
+	}
+	return count;
+}
+
+/*
+ * Funcao para encontrar pessoas com exatamente 1 contato
+ */
+void pessoasComUmContato(Vertice G[], int ordem) {
+	int i, count;
+	int encontrou = 0;
+
+	printf("\nMoradores com exatamente um contato na rede:\n");
+
+	for(i = 0; i < ordem; i++) {
+		count = contarContatos(G, i);
+		if(count == 1) {
+			printf("%s\n", G[i].nomePessoa);
+			encontrou = 1;
+		}
+	}
+
+	if(encontrou == 0) {
+		printf("Nao existem moradores com exatamente um contato.\n");
+	}
+	printf("\n");
+}
+
+/*
+ * Funcao para encontrar quem possui mais contatos na rede
+ */
+void pessoasComMaisContatos(Vertice G[], int ordem) {
+	int i, count;
+	int max = -1;
+
+	/* Primeiro passo: descobre qual e o numero maximo de contatos */
+	for(i = 0; i < ordem; i++) {
+		count = contarContatos(G, i);
+		if(count > max) {
+			max = count;
+		}
+	}
+
+	printf("\nMorador(es) com mais contatos na rede (%d contatos):\n", max);
+	if (max == 0) {
+		printf("Nenhum morador possui contatos.\n");
+		return;
+	}
+
+	/* Segundo passo: imprime quem possui essa quantidade maxima de contatos */
+	for(i = 0; i < ordem; i++) {
+		count = contarContatos(G, i);
+		if(count == max) {
+			printf("%s\n", G[i].nomePessoa);
+		}
+	}
+	printf("\n");
+}
+
+
+/*
  * Programa para representar a rede social de moradores
  * de um condominio.
  */
@@ -188,7 +263,7 @@ int main(int argc, char *argv[]) {
 
 
 	/*
-	 * nomes dos moradores
+	 * Nomes dos moradores
 	 */
 	strcpy(G[0].nomePessoa, "Ana");
 	strcpy(G[1].nomePessoa, "Bruno");
@@ -208,7 +283,7 @@ int main(int argc, char *argv[]) {
 
 
 	/*
-	 * contatos entre os moradores
+	 * Contatos entre os moradores
 	 */
 
 	acrescentarAresta(G, ordemG, 0, 1);
@@ -247,9 +322,19 @@ int main(int argc, char *argv[]) {
 
 
 	/*
-	 * verifica moradores que nao possuem nenhum contato
+	 * Verifica moradores que nao possuem nenhum contato
 	 */
 	pessoasSemContato(G, ordemG);
+
+	/*
+	 * Verifica moradores que possuem exatamente 1 contato
+	 */
+	pessoasComUmContato(G, ordemG);
+
+	/*
+	 * Verifica moradores com o maior numero de contatos
+	 */
+	pessoasComMaisContatos(G, ordemG);
 
 
 	destruirGrafo(&G, ordemG);
