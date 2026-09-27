@@ -11,8 +11,7 @@ O programa implementa funções para criação e consulta da rede social, permit
 - Fabyani Tiva Yan — RA: 10431835
 - Rafael Araujo Cabral Moreira — RA: 10441919
 - Bruna Amorim Maia — RA: 10431883
-- Bruna Soncini — RA: 10428267
-
+  
 ## Linguagem
 
 - C
