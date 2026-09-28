@@ -1,5 +1,24 @@
-/* 
- * REPRESENTACAO DE GRAFOS - Versao 2026-2
+/*
+ * PROJETO DE PROGRAMACAO - GRUPO SOCIAL (PARTE 1)
+ * Teoria dos Grafos - 2026-2
+ * Prof. Roberto C. de Araujo
+ *
+ * Integrantes:
+ *   Bruna Amorim Maia            - RA: 10431883
+ *   Fabyani Tiva Yan             - RA: 10431835
+ *   Rafael Araujo Cabral Moreira - RA: 10441919
+ *
+ * Descricao: modelagem da rede de contatos de 15 moradores de um
+ * condominio residencial por meio de um grafo nao orientado.
+ * Cada vertice representa um morador e cada aresta representa um
+ * contato direto (e reciproco) entre dois moradores.
+ *
+ * Base: implementacao de grafos Grafo_2026-2.c fornecida na disciplina.
+ */
+
+ 
+/*
+ * REPRESENTACAO DE GRAFOS
  */
 
 #include<stdio.h>
@@ -44,6 +63,11 @@ void pessoasSemContato(Vertice G[], int ordem);
 int contarContatos(Vertice G[], int v);
 void pessoasComUmContato(Vertice G[], int ordem);
 void pessoasComMaisContatos(Vertice G[], int ordem);
+
+/*
+ * Declaracao da funcao acrescentada para o projeto (Pessoa 3)
+ */
+void gruposIsolados(Vertice G[], int ordem);
 
 
 /*
@@ -250,6 +274,112 @@ void pessoasComMaisContatos(Vertice G[], int ordem) {
 
 
 /*
+ * Funcao acrescentada para o projeto, que verifica se existem grupos
+ * isolados na rede, isto e, grupos de moradores em que nenhum morador
+ * de dentro do grupo tem contato com algum morador de fora do grupo.
+ *
+ * Em termos de grafos, cada grupo isolado corresponde a um componente
+ * conexo do grafo. Para encontrar os componentes e usada uma busca em
+ * largura (BFS):
+ *   1. Todos os moradores comecam marcados como "nao visitados" (0).
+ *   2. Para cada morador ainda nao visitado, um novo grupo e iniciado:
+ *      o morador entra na fila e e marcado com o numero do grupo.
+ *   3. Enquanto a fila nao estiver vazia, retira-se um morador da fila
+ *      e percorre-se a sua lista de contatos. Cada contato ainda nao
+ *      visitado e marcado com o mesmo numero do grupo e entra na fila.
+ *   4. Quando a fila esvazia, todos os moradores alcancaveis a partir
+ *      do primeiro ja foram marcados, e o grupo esta completo.
+ * Ao final, se existir mais de um grupo, a rede possui grupos isolados.
+ */
+void gruposIsolados(Vertice G[], int ordem){
+	int *grupo;   /* grupo[i] = numero do grupo do morador i (0 = nao visitado) */
+	int *fila;    /* fila usada na busca em largura */
+	int inicio, fim;
+	int i, j, v, w;
+	int qtdGrupos = 0;
+	int tamanho;
+	Aresta *aux;
+
+	grupo = (int*) malloc(sizeof(int) * ordem);
+	fila  = (int*) malloc(sizeof(int) * ordem);
+
+	if(grupo == NULL || fila == NULL){
+		printf("Erro de memoria ao procurar grupos isolados.\n");
+		free(grupo);
+		free(fila);
+		return;
+	}
+
+	/* passo 1: ninguem foi visitado ainda */
+	for(i = 0; i < ordem; i++)
+		grupo[i] = 0;
+
+	/* passos 2 a 4: uma busca em largura para cada grupo novo */
+	for(i = 0; i < ordem; i++){
+
+		if(grupo[i] != 0)
+			continue; /* morador ja pertence a um grupo encontrado */
+
+		qtdGrupos++;
+		inicio = 0;
+		fim = 0;
+
+		fila[fim++] = i;
+		grupo[i] = qtdGrupos;
+
+		while(inicio < fim){
+			v = fila[inicio++];
+
+			for(aux = G[v].a; aux != NULL; aux = aux->prox){
+				w = aux->outroExtremo;
+
+				if(grupo[w] == 0){
+					grupo[w] = qtdGrupos;
+					fila[fim++] = w;
+				}
+			}
+		}
+	}
+
+	printf("\nGrupos isolados na rede:\n");
+
+	if(qtdGrupos == 1){
+		printf("Nao existem grupos isolados. Todos os moradores estao ligados,\n");
+		printf("direta ou indiretamente, em um unico grupo.\n\n");
+	}
+	else{
+		printf("A rede possui %d grupos isolados. Nenhum morador de um grupo\n", qtdGrupos);
+		printf("tem contato com moradores de outro grupo.\n\n");
+
+		for(j = 1; j <= qtdGrupos; j++){
+
+			/* conta quantos moradores o grupo j possui */
+			tamanho = 0;
+			for(i = 0; i < ordem; i++)
+				if(grupo[i] == j)
+					tamanho++;
+
+			if(tamanho == 1)
+				printf("Grupo %d (1 morador, sem contatos): ", j);
+			else
+				printf("Grupo %d (%d moradores): ", j, tamanho);
+
+			/* exibe os moradores do grupo j */
+			for(i = 0; i < ordem; i++)
+				if(grupo[i] == j)
+					printf("%s  ", G[i].nomePessoa);
+
+			printf("\n");
+		}
+		printf("\n");
+	}
+
+	free(grupo);
+	free(fila);
+}
+
+
+/*
  * Programa para representar a rede social de moradores
  * de um condominio.
  */
@@ -335,6 +465,11 @@ int main(int argc, char *argv[]) {
 	 * Verifica moradores com o maior numero de contatos
 	 */
 	pessoasComMaisContatos(G, ordemG);
+
+	/*
+	 * Verifica se existem grupos isolados na rede
+	 */
+	gruposIsolados(G, ordemG);
 
 
 	destruirGrafo(&G, ordemG);
