@@ -274,11 +274,11 @@ void pessoasComMaisContatos(Vertice G[], int ordem) {
 
 
 /*
- * Funcao acrescentada para o projeto, que verifica se existem grupos
+ * Funcao que verifica se existem grupos
  * isolados na rede, isto e, grupos de moradores em que nenhum morador
  * de dentro do grupo tem contato com algum morador de fora do grupo.
  *
- * Em termos de grafos, cada grupo isolado corresponde a um componente
+ * Cada grupo isolado corresponde a um componente
  * conexo do grafo. Para encontrar os componentes e usada uma busca em
  * largura (BFS):
  *   1. Todos os moradores comecam marcados como "nao visitados" (0).
